@@ -18,7 +18,6 @@ dynamic_project_options(
     PCH_HEADERS
     <vector>
     <string>
-    ENABLE_CPPCHECK
     ENABLE_CLANG_TIDY
     ENABLE_SANITIZER_ADDRESS
     MSVC_WARNINGS
