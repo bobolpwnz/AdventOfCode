@@ -14,7 +14,7 @@ env:
   CONAN_SYSREQUIRES_MODE: enabled
   CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-  CLANG_TIDY_VERSION: "13.0.0"
+  CLANG_TIDY_VERSION: "15.0.0"
 
 jobs:
   Test:
@@ -35,8 +35,8 @@ jobs:
           - macos-11
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm-13.0.0
-          - gcc-11
+          - llvm-15.0.0
+          - gcc-12
         generator:
           - "Ninja Multi-Config"
         build_type:
@@ -49,9 +49,9 @@ jobs:
         exclude:
           # mingw is determined by this author to be too buggy to support
           - os: macos-11
-            compiler: gcc-11
+            compiler: gcc-12
           - os: ubuntu-20.04
-            compiler: llvm-13.0.0
+            compiler: llvm-15.0.0
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
