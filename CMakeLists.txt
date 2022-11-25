@@ -14,9 +14,14 @@ set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT TRUE)
 include(FetchContent)
 FetchContent_Declare(_project_options URL https://github.com/aminya/project_options/archive/refs/tags/v0.20.0.zip)
 FetchContent_MakeAvailable(_project_options)
-include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
+include(${_project_options_SOURCE_DIR}/Index.cmake)
 
-project(advent_of_code_2022)
+project(
+  advent_of_code_2022
+  VERSION 0.0.1
+  DESCRIPTION "Advent of Code 2022"
+  HOMEPAGE_URL "https://github.com/bobolpwnz/AdventOfCode2022"
+  LANGUAGES CXX)
 
 get_property(BUILDING_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(BUILDING_MULTI_CONFIG)
@@ -39,6 +44,8 @@ if(BUILDING_MULTI_CONFIG)
         CACHE STRING "Enabled build types" FORCE)
   endif()
 endif()
+
+include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
 dynamic_project_options(
     PCH_HEADERS
