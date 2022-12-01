@@ -1,5 +1,6 @@
 ---
 Checks: "*,
+        -bugprone-exception-escape,
         -abseil-*,
         -altera-*,
         -android-*,
