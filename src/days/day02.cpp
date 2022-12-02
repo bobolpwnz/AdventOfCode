@@ -30,6 +30,19 @@ std::vector<std::pair<char, char>> parseRounds(const std::filesystem::path& file
     return rounds;
 }
 
+template <typename TheirType, typename MineType>
+std::vector<std::pair<TheirType, MineType>> transformInput(const std::vector<std::pair<char, char>>& input,
+                                                           const std::unordered_map<char, TheirType>& theirMappings,
+                                                           const std::unordered_map<char, MineType>& mineMappings) {
+    std::vector<std::pair<TheirType, MineType>> transformed{};
+    transformed.reserve(input.size());
+    const auto transformFunc = [&theirMappings, &mineMappings](const auto pair) {
+        return std::pair<TheirType, MineType>(theirMappings.at(pair.first), mineMappings.at(pair.second));
+    };
+    std::transform(input.cbegin(), input.cend(), std::back_inserter(transformed), transformFunc);
+    return transformed;
+}
+
 bool isWinning(const Pick theirPick, const Pick minePick) {
     return (theirPick == Pick::PAPER && minePick == Pick::SCIZORS) ||
            (theirPick == Pick::ROCK && minePick == Pick::PAPER) ||
@@ -97,30 +110,18 @@ uint32_t calculateTotalScorePart2(const std::vector<std::pair<Pick, Result>>& ro
 std::tuple<int64_t, int64_t> day02() {
     static const std::unordered_map<char, Pick> THEIR_MAPPIGS = {
         {'A', Pick::ROCK}, {'B', Pick::PAPER}, {'C', Pick::SCIZORS}};
-
     static const std::unordered_map<char, Pick> MINE_PICK_MAPPIGS = {
         {'X', Pick::ROCK}, {'Y', Pick::PAPER}, {'Z', Pick::SCIZORS}};
-
     static const std::unordered_map<char, Result> MINE_RESULT_MAPPIGS = {
         {'X', Result::LOSS}, {'Y', Result::DRAW}, {'Z', Result::WIN}};
 
     const auto input = parseRounds("resources/day02/input.txt");
 
-    std::vector<std::pair<Pick, Pick>> part1{};
-    part1.reserve(input.size());
-    std::transform(input.cbegin(), input.cend(), std::back_inserter(part1), [](const auto pair) {
-        return std::pair<Pick, Pick>(THEIR_MAPPIGS.at(pair.first), MINE_PICK_MAPPIGS.at(pair.second));
-    });
+    const auto inputPart1 = transformInput(input, THEIR_MAPPIGS, MINE_PICK_MAPPIGS);
+    const auto totalScorePart1 = calculateTotalScorePart1(inputPart1);
 
-    const auto totalScorePart1 = calculateTotalScorePart1(part1);
-
-    std::vector<std::pair<Pick, Result>> part2{};
-    part2.reserve(input.size());
-    std::transform(input.cbegin(), input.cend(), std::back_inserter(part2), [](const auto pair) {
-        return std::pair<Pick, Result>(THEIR_MAPPIGS.at(pair.first), MINE_RESULT_MAPPIGS.at(pair.second));
-    });
-
-    const auto totalScorePart2 = calculateTotalScorePart2(part2);
+    const auto inputPart2 = transformInput(input, THEIR_MAPPIGS, MINE_RESULT_MAPPIGS);
+    const auto totalScorePart2 = calculateTotalScorePart2(inputPart2);
 
     return {totalScorePart1, totalScorePart2};
 }

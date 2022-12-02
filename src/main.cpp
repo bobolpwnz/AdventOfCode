@@ -8,9 +8,9 @@
 #include "days/day01.hpp"
 #include "days/day02.hpp"
 
-static constexpr int CURRENT_DAY = 1;
-static constexpr size_t MAX_DAY_COUNT = 25;
 static constexpr int ARGV_INTEGER_BASE = 10;
+static constexpr int CURRENT_DAY = 2;
+static constexpr size_t MAX_DAY_COUNT = 25;
 
 int main(const int argc, const char* argv[]) {
     namespace aoc = bblp::advent_of_code_2022;
