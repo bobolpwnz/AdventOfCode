@@ -48,6 +48,7 @@ endif()
 include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
 dynamic_project_options(
+    ENABLE_CONAN
     PCH_HEADERS
     <vector>
     <string>
@@ -75,8 +76,6 @@ endif()
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
-add_subdirectory(src)
-
 if(MSVC)
   get_all_installable_targets(all_targets)
   message("all_targets=${all_targets}")
@@ -84,3 +83,9 @@ if(MSVC)
 endif()
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+
+#set(MAIN_LIBRARY_TARGET_NAME "libaoc2022")
+#set(MAIN_EXEC_TARGET_NAME "aoc2022")
+
+add_subdirectory(src)
+add_subdirectory(test)
