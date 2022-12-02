@@ -108,19 +108,19 @@ uint32_t calculateTotalScorePart2(const std::vector<std::pair<Pick, Result>>& ro
 }  // namespace
 
 std::tuple<int64_t, int64_t> day02() {
-    static const std::unordered_map<char, Pick> THEIR_MAPPIGS = {
+    const std::unordered_map<char, Pick> theirPickMappings = {
         {'A', Pick::ROCK}, {'B', Pick::PAPER}, {'C', Pick::SCIZORS}};
-    static const std::unordered_map<char, Pick> MINE_PICK_MAPPIGS = {
+    const std::unordered_map<char, Pick> minePickMappings = {
         {'X', Pick::ROCK}, {'Y', Pick::PAPER}, {'Z', Pick::SCIZORS}};
-    static const std::unordered_map<char, Result> MINE_RESULT_MAPPIGS = {
+    const std::unordered_map<char, Result> mineResultMappings = {
         {'X', Result::LOSS}, {'Y', Result::DRAW}, {'Z', Result::WIN}};
 
     const auto input = parseRounds("resources/day02/input.txt");
 
-    const auto inputPart1 = transformInput(input, THEIR_MAPPIGS, MINE_PICK_MAPPIGS);
+    const auto inputPart1 = transformInput(input, theirPickMappings, minePickMappings);
     const auto totalScorePart1 = calculateTotalScorePart1(inputPart1);
 
-    const auto inputPart2 = transformInput(input, THEIR_MAPPIGS, MINE_RESULT_MAPPIGS);
+    const auto inputPart2 = transformInput(input, theirPickMappings, mineResultMappings);
     const auto totalScorePart2 = calculateTotalScorePart2(inputPart2);
 
     return {totalScorePart1, totalScorePart2};
