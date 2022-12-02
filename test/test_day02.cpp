@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "day02/day02.hpp"
+#include "days/day02.hpp"
 
 namespace bblp::advent_of_code_2022::test {
 TEST(Day2, test) {

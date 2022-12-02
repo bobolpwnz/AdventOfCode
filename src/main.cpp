@@ -5,8 +5,8 @@
 #include <iostream>
 #include <span>
 
-#include "day01/day01.hpp"
-#include "day02/day02.hpp"
+#include "days/day01.hpp"
+#include "days/day02.hpp"
 
 static constexpr int CURRENT_DAY = 1;
 static constexpr size_t MAX_DAY_COUNT = 25;

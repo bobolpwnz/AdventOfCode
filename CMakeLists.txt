@@ -82,10 +82,25 @@ if(MSVC)
   set_target_properties(${all_targets} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=$(VC_ExecutablePath_x64);%PATH%")
 endif()
 
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+set(TARGET_BASE_NAME "aoc2022")
+set(MAIN_LIBRARY_TARGET_NAME "lib${TARGET_BASE_NAME}")
+set(MAIN_EXEC_TARGET_NAME ${TARGET_BASE_NAME})
+set(TEST_EXEC_TARGET_NAME "${MAIN_EXEC_TARGET_NAME}_ut")
 
-#set(MAIN_LIBRARY_TARGET_NAME "libaoc2022")
-#set(MAIN_EXEC_TARGET_NAME "aoc2022")
+add_library(${MAIN_LIBRARY_TARGET_NAME} "src/common/file_utils.cpp" "src/days/day01.cpp" "src/days/day02.cpp")
 
-add_subdirectory(src)
-add_subdirectory(test)
+add_executable(${MAIN_EXEC_TARGET_NAME} "src/main.cpp")
+target_link_libraries(${MAIN_EXEC_TARGET_NAME} PRIVATE ${MAIN_LIBRARY_TARGET_NAME})
+target_include_directories(${MAIN_LIBRARY_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+find_package(GTest REQUIRED)
+
+add_executable(${TEST_EXEC_TARGET_NAME} "test/main.cpp" "test/test_day01.cpp" "test/test_day02.cpp")
+target_link_libraries(${TEST_EXEC_TARGET_NAME} PRIVATE GTest::gtest GTest::gtest_main ${MAIN_LIBRARY_TARGET_NAME})
+target_include_directories(${TEST_EXEC_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_custom_command(
+        TARGET ${TEST_EXEC_TARGET_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/resources
+                ${CMAKE_CURRENT_BINARY_DIR}/resources)
