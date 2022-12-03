@@ -1,5 +1,6 @@
 ---
 Checks: "*,
+        -bugprone-easily-swappable-parameters,
         -bugprone-exception-escape,
         -abseil-*,
         -altera-*,

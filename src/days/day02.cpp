@@ -2,6 +2,7 @@
 #include "common/file_utils.hpp"
 
 #include <algorithm>
+#include <numeric>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -76,34 +77,34 @@ Pick winningPick(const Pick theirPick) {
 };
 
 uint32_t calculateTotalScorePart1(const std::vector<std::pair<Pick, Pick>>& rounds) {
-    uint32_t totalScore = 0;
-    for (const auto& round : rounds) {
+    const auto calculateRoundScore = [](const uint32_t sum, const std::pair<Pick, Pick>& round) {
         if (round.first == round.second) {
-            totalScore += DRAW_BONUS;
+            return sum + static_cast<uint32_t>(round.second) + DRAW_BONUS;
         } else if (isWinning(round.first, round.second)) {
-            totalScore += WIN_BONUS;
+            return sum + static_cast<uint32_t>(round.second) + WIN_BONUS;
+        } else {
+            return sum + static_cast<uint32_t>(round.second);
         }
-        totalScore += static_cast<uint32_t>(round.second);
-    }
-    return totalScore;
+    };
+
+    return std::accumulate(rounds.cbegin(), rounds.cend(), 0U, calculateRoundScore);
 }
 
 uint32_t calculateTotalScorePart2(const std::vector<std::pair<Pick, Result>>& rounds) {
-    uint32_t totalScorePart2 = 0;
-    for (const auto& round : rounds) {
+    const auto calculateRoundScore = [](const uint32_t sum, const std::pair<Pick, Result>& round) {
         switch (round.second) {
             case Result::LOSS:
-                totalScorePart2 += static_cast<uint32_t>(losingPick(round.first));
-                break;
+                return sum + static_cast<uint32_t>(losingPick(round.first));
             case Result::DRAW:
-                totalScorePart2 += static_cast<uint32_t>(round.first) + DRAW_BONUS;
-                break;
+                return sum + static_cast<uint32_t>(round.first) + DRAW_BONUS;
             case Result::WIN:
-                totalScorePart2 += static_cast<uint32_t>(winningPick(round.first)) + WIN_BONUS;
-                break;
+                return sum + static_cast<uint32_t>(winningPick(round.first)) + WIN_BONUS;
+            default:
+                throw std::runtime_error("Invalid round result");
         }
-    }
-    return totalScorePart2;
+    };
+    
+    return std::accumulate(rounds.cbegin(), rounds.cend(), 0U, calculateRoundScore);
 }
 }  // namespace
 
