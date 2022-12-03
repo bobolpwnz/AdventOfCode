@@ -5,9 +5,7 @@
 #include <iostream>
 #include <span>
 
-#include "days/day01.hpp"
-#include "days/day02.hpp"
-#include "days/day03.hpp"
+#include "days/days.hpp"
 
 static constexpr int ARGV_INTEGER_BASE = 10;
 static constexpr int CURRENT_DAY = 3;

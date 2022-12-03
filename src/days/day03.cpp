@@ -1,4 +1,4 @@
-#include "day03.hpp"
+#include "days.hpp"
 
 #include "common/file_utils.hpp"
 

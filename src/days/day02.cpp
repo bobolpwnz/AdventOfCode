@@ -1,4 +1,5 @@
-#include "day02.hpp"
+#include "days.hpp"
+
 #include "common/file_utils.hpp"
 
 #include <algorithm>
