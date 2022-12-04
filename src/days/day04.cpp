@@ -13,13 +13,12 @@ using SectionRange = std::pair<uint32_t, uint32_t>;
 
 SectionRange parseSectionRange(const std::string& string) {
     static constexpr char delimiter = '-';
-    static constexpr int sectionBase = 10;
 
     const auto delimiterPosition = string.find(delimiter);
     const auto start = string.substr(0, delimiterPosition);
     const auto end = string.substr(delimiterPosition + 1, string.size() - delimiterPosition);
 
-    return {std::strtoul(start.c_str(), nullptr, sectionBase), std::strtoul(end.c_str(), nullptr, sectionBase)};
+    return {std::stoul(start), std::stoul(end)};
 }
 
 std::vector<std::pair<SectionRange, SectionRange>> parseSections(const std::filesystem::path& filePath) {

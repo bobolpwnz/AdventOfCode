@@ -20,7 +20,7 @@ int main(const int argc, const char* argv[]) {
 
         int dayToRun = CURRENT_DAY;
         if (argc > 1) {
-            dayToRun = std::strtol(args[1], nullptr, ARGV_INTEGER_BASE);
+            dayToRun = std::stoi(args[1]);
         }
 
         if (dayToRun < 1 || dayToRun > CURRENT_DAY) {
