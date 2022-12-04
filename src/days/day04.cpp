@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <iostream>
 #include <numeric>
 #include <vector>
 
@@ -18,7 +17,7 @@ SectionRange parseSectionRange(const std::string& string) {
 
     const auto delimiterPosition = string.find(delimiter);
     const auto start = string.substr(0, delimiterPosition);
-    const auto end = string.substr(delimiterPosition + 1, string.size());
+    const auto end = string.substr(delimiterPosition + 1, string.size() - delimiterPosition);
 
     return {std::strtoul(start.c_str(), nullptr, sectionBase), std::strtoul(end.c_str(), nullptr, sectionBase)};
 }
@@ -32,7 +31,7 @@ std::vector<std::pair<SectionRange, SectionRange>> parseSections(const std::file
         if (!line.empty()) {
             const auto delimiterPosition = line.find(',');
             const auto firstElf = line.substr(0, delimiterPosition);
-            const auto secondElf = line.substr(delimiterPosition + 1, line.size());
+            const auto secondElf = line.substr(delimiterPosition + 1, line.size() - delimiterPosition);
 
             sections.emplace_back(parseSectionRange(firstElf), parseSectionRange(secondElf));
         }
