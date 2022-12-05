@@ -3,9 +3,9 @@
 #include "days/days.hpp"
 
 namespace bblp::advent_of_code_2022::test {
-TEST(Day1, test) {
-    const auto result = day01();
-    EXPECT_EQ("71300", result.first);
-    EXPECT_EQ("209691", result.second);
+TEST(Day5, test) {
+    const auto result = day05();
+    EXPECT_EQ("BZLVHBWQF", result.first);
+    EXPECT_EQ("TDGJQTZSL", result.second);
 }
 };  // namespace bblp::advent_of_code_2022::test

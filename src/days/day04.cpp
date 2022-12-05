@@ -48,8 +48,8 @@ bool isSectionBorderWithin(const uint32_t target, const SectionRange& section) {
 }
 }  // namespace
 
-std::tuple<int64_t, int64_t> day04() {
-    const auto input = parseSections("resources/day04/input.txt");
+std::pair<std::string, std::string> day04() {
+    const auto input = parseSections("resources/day04.txt");
 
     const auto areSectionsOverlappingFully = [](const std::pair<SectionRange, SectionRange>& sections) {
         return (isSectionContainedWithin(sections.first, sections.second) ||
@@ -67,6 +67,6 @@ std::tuple<int64_t, int64_t> day04() {
     const auto numberOfSectionsPartiallyOverlapping =
         std::count_if(input.begin(), input.end(), areSectionsOverlappingPartially);
 
-    return {numberOfSectionsFullyOverlapping, numberOfSectionsPartiallyOverlapping};
+    return {std::to_string(numberOfSectionsFullyOverlapping), std::to_string(numberOfSectionsPartiallyOverlapping)};
 }
 }  // namespace bblp::advent_of_code_2022

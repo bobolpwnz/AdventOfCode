@@ -39,8 +39,8 @@ int calculateTopThreeSum(const std::vector<int>& input) {
 }
 }  // namespace
 
-std::tuple<int64_t, int64_t> day01() {
-    auto elfsCalories = parseEflsCalories("resources/day01/input.txt");
+std::pair<std::string, std::string> day01() {
+    auto elfsCalories = parseEflsCalories("resources/day01.txt");
 
     const auto iter = std::max_element(elfsCalories.begin(), elfsCalories.end());
     const auto max = *iter;
@@ -48,6 +48,6 @@ std::tuple<int64_t, int64_t> day01() {
     std::sort(elfsCalories.begin(), elfsCalories.end(), std::greater{});
     const auto topThreeSum = calculateTopThreeSum(elfsCalories);
 
-    return {max, topThreeSum};
+    return {std::to_string(max), std::to_string(topThreeSum)};
 }
 }  // namespace bblp::advent_of_code_2022

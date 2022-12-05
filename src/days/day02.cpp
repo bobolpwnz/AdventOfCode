@@ -109,7 +109,7 @@ uint32_t calculateTotalScorePart2(const std::vector<std::pair<Pick, Result>>& ro
 }
 }  // namespace
 
-std::tuple<int64_t, int64_t> day02() {
+std::pair<std::string, std::string> day02() {
     const std::unordered_map<char, Pick> theirPickMappings = {
         {'A', Pick::ROCK}, {'B', Pick::PAPER}, {'C', Pick::SCIZORS}};
     const std::unordered_map<char, Pick> minePickMappings = {
@@ -117,7 +117,7 @@ std::tuple<int64_t, int64_t> day02() {
     const std::unordered_map<char, Result> mineResultMappings = {
         {'X', Result::LOSS}, {'Y', Result::DRAW}, {'Z', Result::WIN}};
 
-    const auto input = parseRounds("resources/day02/input.txt");
+    const auto input = parseRounds("resources/day02.txt");
 
     const auto inputPart1 = transformInput(input, theirPickMappings, minePickMappings);
     const auto totalScorePart1 = calculateTotalScorePart1(inputPart1);
@@ -125,6 +125,6 @@ std::tuple<int64_t, int64_t> day02() {
     const auto inputPart2 = transformInput(input, theirPickMappings, mineResultMappings);
     const auto totalScorePart2 = calculateTotalScorePart2(inputPart2);
 
-    return {totalScorePart1, totalScorePart2};
+    return {std::to_string(totalScorePart1), std::to_string(totalScorePart2)};
 }
 }  // namespace bblp::advent_of_code_2022

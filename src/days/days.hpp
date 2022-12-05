@@ -1,13 +1,14 @@
 #pragma once
 
-#include <cstdint>
-#include <tuple>
+#include <string>
+#include <utility>
 
 namespace bblp {
 namespace advent_of_code_2022 {
-std::tuple<int64_t, int64_t> day01();
-std::tuple<int64_t, int64_t> day02();
-std::tuple<int64_t, int64_t> day03();
-std::tuple<int64_t, int64_t> day04();
+std::pair<std::string, std::string> day01();
+std::pair<std::string, std::string> day02();
+std::pair<std::string, std::string> day03();
+std::pair<std::string, std::string> day04();
+std::pair<std::string, std::string> day05();
 }
 }  // namespace bblp

@@ -117,8 +117,8 @@ uint32_t calculateTotalPriority(const std::vector<char>& misplacedItems) {
 }
 }  // namespace
 
-std::tuple<int64_t, int64_t> day03() {
-    const auto input = parseRucksacks("resources/day03/input.txt");
+std::pair<std::string, std::string> day03() {
+    const auto input = parseRucksacks("resources/day03.txt");
 
     const auto compartments = buildCompartments(input);
     const auto misplacedItems = findMisplacedItems(compartments);
@@ -127,6 +127,6 @@ std::tuple<int64_t, int64_t> day03() {
     const auto lostBadges = findLostBadges(input);
     const auto badgesPriority = calculateTotalPriority(lostBadges);
 
-    return {totalPriority, badgesPriority};
+    return {std::to_string(totalPriority), std::to_string(badgesPriority)};
 }
 }  // namespace bblp::advent_of_code_2022
