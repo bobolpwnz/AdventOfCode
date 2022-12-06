@@ -7,7 +7,7 @@
 
 #include "days/days.hpp"
 
-static constexpr int CURRENT_DAY = 5;
+static constexpr int CURRENT_DAY = 6;
 static constexpr size_t MAX_DAY_COUNT = 25;
 
 int main(const int argc, const char* argv[]) {
@@ -15,7 +15,7 @@ int main(const int argc, const char* argv[]) {
 
     try {
         const std::array<std::function<std::pair<std::string, std::string>()>, MAX_DAY_COUNT> days{
-            aoc::day01, aoc::day02, aoc::day03, aoc::day04, aoc::day05};
+            aoc::day01, aoc::day02, aoc::day03, aoc::day04, aoc::day05, aoc::day06};
         const std::span<const char*> args = {argv, static_cast<size_t>(argc)};
 
         int dayToRun = CURRENT_DAY;

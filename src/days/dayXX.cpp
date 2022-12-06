@@ -21,7 +21,7 @@ auto parse(const std::filesystem::path& filePath) {
 }  // namespace
 
 std::pair<std::string, std::string> dayXX() {
-    const auto input = parseStacks("resources/dayXX/input.txt");
+    const auto input = parseStacks("resources/dayXX.txt");
     return {"", ""};
 }
 }  // namespace bblp::advent_of_code_2022
