@@ -2,6 +2,7 @@
 Checks: "*,
         -bugprone-easily-swappable-parameters,
         -bugprone-exception-escape,
+        -misc-no-recursion,
         -abseil-*,
         -altera-*,
         -android-*,
