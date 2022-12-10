@@ -14,5 +14,6 @@ std::pair<std::string, std::string> day06();
 std::pair<std::string, std::string> day07();
 std::pair<std::string, std::string> day08();
 std::pair<std::string, std::string> day09();
+std::pair<std::string, std::string> day10(bool printOutput = true);
 }
 }  // namespace bblp

@@ -98,7 +98,7 @@ set(DAY_SOURCES "src/days/day01.cpp"
                 "src/days/day07.cpp"
                 "src/days/day08.cpp"
                 "src/days/day09.cpp"
-)
+                "src/days/day10.cpp")
 
 add_library(${MAIN_LIBRARY_TARGET_NAME} ${MAIN_LIBRARY_UTIL_SOURCES} ${DAY_SOURCES})
 
@@ -117,7 +117,7 @@ set(TEST_DAY_SOURCES "test/test_day01.cpp"
                      "test/test_day07.cpp"
                      "test/test_day08.cpp"
                      "test/test_day09.cpp"
-)
+                     "test/test_day10.cpp")
 add_executable(${TEST_EXEC_TARGET_NAME} "test/main.cpp" ${TEST_DAY_SOURCES})
 target_link_libraries(${TEST_EXEC_TARGET_NAME} PRIVATE GTest::gtest GTest::gtest_main ${MAIN_LIBRARY_TARGET_NAME})
 target_include_directories(${TEST_EXEC_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
