@@ -1,6 +1,7 @@
 #include "days.hpp"
 
 #include "common/file_utils.hpp"
+#include "common/grid.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -9,24 +10,6 @@
 
 namespace bblp::advent_of_code_2022 {
 namespace {
-
-class Grid {
-  public:
-    Grid(const int32_t width, const int32_t height, std::string tiles)
-        : mWidth(width), mHeight(height), mTiles(std::move(tiles)) {}
-
-    [[nodiscard]] inline int32_t width() const { return mWidth; }
-    [[nodiscard]] inline int32_t height() const { return mHeight; }
-
-    [[nodiscard]] inline char at(const int32_t width, const int32_t height) const {
-        return mTiles.at(height * mWidth + width);
-    }
-
-  private:
-    int32_t mWidth;
-    int32_t mHeight;
-    std::string mTiles;
-};
 
 auto parse(const std::filesystem::path& filePath) {
     static constexpr std::size_t BUFFER_SIZE = 10000;
@@ -44,10 +27,10 @@ auto parse(const std::filesystem::path& filePath) {
         }
     };
     parseInput(filePath, lineCallback);
-    return Grid(width, height, tiles);
+    return Grid<char>(width, height, {tiles.begin(), tiles.end()});
 }
 
-bool isTreeVisibleFromLeft(const int32_t x, const int32_t y, const Grid& grid) {
+bool isTreeVisibleFromLeft(const int32_t x, const int32_t y, const Grid<char>& grid) {
     char largestTree = -1;
     for (auto index = 0; index < x; ++index) {
         if (grid.at(index, y) > largestTree) {
@@ -57,7 +40,7 @@ bool isTreeVisibleFromLeft(const int32_t x, const int32_t y, const Grid& grid) {
     return grid.at(x, y) > largestTree;
 }
 
-bool isTreeVisibleFromRight(const int32_t x, const int32_t y, const Grid& grid) {
+bool isTreeVisibleFromRight(const int32_t x, const int32_t y, const Grid<char>& grid) {
     char largestTree = -1;
     for (auto index = grid.width() - 1; index > x; --index) {
         if (grid.at(index, y) > largestTree) {
@@ -67,7 +50,7 @@ bool isTreeVisibleFromRight(const int32_t x, const int32_t y, const Grid& grid) 
     return grid.at(x, y) > largestTree;
 }
 
-bool isTreeVisibleFromTop(const int32_t x, const int32_t y, const Grid& grid) {
+bool isTreeVisibleFromTop(const int32_t x, const int32_t y, const Grid<char>& grid) {
     char largestTree = -1;
     for (auto index = 0; index < y; ++index) {
         if (grid.at(x, index) > largestTree) {
@@ -77,7 +60,7 @@ bool isTreeVisibleFromTop(const int32_t x, const int32_t y, const Grid& grid) {
     return grid.at(x, y) > largestTree;
 }
 
-bool isTreeVisibleFromBottom(const int32_t x, const int32_t y, const Grid& grid) {
+bool isTreeVisibleFromBottom(const int32_t x, const int32_t y, const Grid<char>& grid) {
     char largestTree = -1;
     for (auto index = grid.height() - 1; index > y; --index) {
         if (grid.at(x, index) > largestTree) {
@@ -87,7 +70,7 @@ bool isTreeVisibleFromBottom(const int32_t x, const int32_t y, const Grid& grid)
     return grid.at(x, y) > largestTree;
 }
 
-bool isTreeVisible(const int32_t x, int32_t y, const Grid& grid) {
+bool isTreeVisible(const int32_t x, int32_t y, const Grid<char>& grid) {
     if (x == 0 || y == 0 || x == grid.width() - 1 || y == grid.height() - 1) {
         return true;
     }
@@ -96,7 +79,7 @@ bool isTreeVisible(const int32_t x, int32_t y, const Grid& grid) {
            isTreeVisibleFromTop(x, y, grid) || isTreeVisibleFromBottom(x, y, grid);
 }
 
-int32_t countVisibleTrees(const Grid& grid) {
+int32_t countVisibleTrees(const Grid<char>& grid) {
     int32_t numberOfVisibleTrees = 0;
     for (auto x = 0; x < grid.width(); ++x) {
         for (auto y = 0; y < grid.height(); ++y) {
@@ -108,7 +91,7 @@ int32_t countVisibleTrees(const Grid& grid) {
     return numberOfVisibleTrees;
 }
 
-int32_t findNumberOfTreesVisibleLeft(const int32_t x, const int32_t y, const Grid& grid) {
+int32_t findNumberOfTreesVisibleLeft(const int32_t x, const int32_t y, const Grid<char>& grid) {
     int32_t numberOfTreesVisible = 0;
     for (auto index = x - 1; index >= 0; --index) {
         ++numberOfTreesVisible;
@@ -119,7 +102,7 @@ int32_t findNumberOfTreesVisibleLeft(const int32_t x, const int32_t y, const Gri
     return numberOfTreesVisible;
 }
 
-int32_t findNumberOfTreesVisibleRight(const int32_t x, const int32_t y, const Grid& grid) {
+int32_t findNumberOfTreesVisibleRight(const int32_t x, const int32_t y, const Grid<char>& grid) {
     int32_t numberOfTreesVisible = 0;
     for (auto index = x + 1; index < grid.width(); ++index) {
         ++numberOfTreesVisible;
@@ -130,7 +113,7 @@ int32_t findNumberOfTreesVisibleRight(const int32_t x, const int32_t y, const Gr
     return numberOfTreesVisible;
 }
 
-int32_t findNumberOfTreesVisibleTop(const int32_t x, const int32_t y, const Grid& grid) {
+int32_t findNumberOfTreesVisibleTop(const int32_t x, const int32_t y, const Grid<char>& grid) {
     int32_t numberOfTreesVisible = 0;
     for (auto index = y - 1; index >= 0; --index) {
         ++numberOfTreesVisible;
@@ -141,7 +124,7 @@ int32_t findNumberOfTreesVisibleTop(const int32_t x, const int32_t y, const Grid
     return numberOfTreesVisible;
 }
 
-int32_t findNumberOfTreesVisibleBottom(const int32_t x, const int32_t y, const Grid& grid) {
+int32_t findNumberOfTreesVisibleBottom(const int32_t x, const int32_t y, const Grid<char>& grid) {
     int32_t numberOfTreesVisible = 0;
     for (auto index = y + 1; index < grid.height(); ++index) {
         ++numberOfTreesVisible;
@@ -152,7 +135,7 @@ int32_t findNumberOfTreesVisibleBottom(const int32_t x, const int32_t y, const G
     return numberOfTreesVisible;
 }
 
-int32_t calculateScenicScore(const int32_t x, const int32_t y, const Grid& grid) {
+int32_t calculateScenicScore(const int32_t x, const int32_t y, const Grid<char>& grid) {
     if (x == 0 || y == 0) {
         return 0;
     }
@@ -161,7 +144,7 @@ int32_t calculateScenicScore(const int32_t x, const int32_t y, const Grid& grid)
            findNumberOfTreesVisibleTop(x, y, grid) * findNumberOfTreesVisibleBottom(x, y, grid);
 }
 
-int32_t findHighestScenicScore(const Grid& grid) {
+int32_t findHighestScenicScore(const Grid<char>& grid) {
     int32_t highestScenicScore = 0;
     for (auto x = 0; x < grid.width(); ++x) {
         for (auto y = 0; y < grid.height(); ++y) {
