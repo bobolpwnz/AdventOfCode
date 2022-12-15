@@ -6,10 +6,7 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <future>
-#include <iostream>
 #include <numeric>
-#include <thread>
 #include <vector>
 
 namespace bblp::advent_of_code_2022 {
@@ -17,6 +14,7 @@ namespace {
 static constexpr int64_t min = 0;
 static constexpr int64_t max = 4000000;
 static constexpr int64_t FREQUENCY_MUL = 4000000;
+static constexpr int64_t INVALID_REQUENCY = -1;
 
 bool operator<(const Point& lhs, const Point& rhs) {
     return lhs.x < rhs.x;
@@ -51,12 +49,12 @@ auto parse(const std::filesystem::path& filePath) {
     return input;
 }
 
-int32_t distance(const Point& from, const Point& to) {
+int32_t calculateDistance(const Point& from, const Point& to) {
     return std::abs(from.x - to.x) + std::abs(from.y - to.y);
 }
 
 bool isInRangeOfSensor(const Point& target, const Point& sensor, const Point& beacon) {
-    return (distance(target, sensor) <= distance(beacon, sensor));
+    return (calculateDistance(target, sensor) <= calculateDistance(beacon, sensor));
 }
 
 int32_t findMin(const Point& sensor, const Point& beacon) {}
@@ -98,7 +96,9 @@ int32_t calculateNumberOfInvalidPositions(const std::vector<std::pair<Point, Poi
     return numberOfInvalidPositions;
 }
 
-bool isInRangeOfOtherSensors(const Point& target, const Point& currentSensor, const std::vector<std::pair<Point, Point>>& input) {
+bool isInRangeOfOtherSensors(const Point& target,
+                             const Point& currentSensor,
+                             const std::vector<std::pair<Point, Point>>& input) {
     for (const auto& other : input) {
         if (currentSensor == other.first) {
             continue;
@@ -124,7 +124,9 @@ bool checkPoint(const Point& point, const Point& sensor, const std::vector<std::
     return true;
 }
 
-int64_t checkTopLeftDiagonal(const Point& sensor, const int64_t distance, const std::vector<std::pair<Point, Point>>& input) {
+int64_t checkTopLeftDiagonal(const Point& sensor,
+                             const int64_t distance,
+                             const std::vector<std::pair<Point, Point>>& input) {
     int64_t x = sensor.x - distance;
     int64_t y = sensor.y;
     while (x <= sensor.x && y >= sensor.y - distance) {
@@ -134,7 +136,7 @@ int64_t checkTopLeftDiagonal(const Point& sensor, const int64_t distance, const 
         ++x;
         --y;
     }
-    return -1;
+    return INVALID_REQUENCY;
 }
 
 int64_t checkTopRightDiagonal(const Point& sensor,
@@ -150,12 +152,12 @@ int64_t checkTopRightDiagonal(const Point& sensor,
         --x;
         ++y;
     }
-    return -1;
+    return INVALID_REQUENCY;
 }
 
 int64_t checkBottomLeftDiagonal(const Point& sensor,
-                                 const int64_t distance,
-                                 const std::vector<std::pair<Point, Point>>& input) {
+                                const int64_t distance,
+                                const std::vector<std::pair<Point, Point>>& input) {
     int64_t x = sensor.x - distance;
     int64_t y = sensor.y;
     while (x <= sensor.x && y <= sensor.y + distance) {
@@ -165,12 +167,12 @@ int64_t checkBottomLeftDiagonal(const Point& sensor,
         ++x;
         ++y;
     }
-    return -1;
+    return INVALID_REQUENCY;
 }
 
 int64_t checkBottomRightDiagonal(const Point& sensor,
-                              const int64_t distance,
-                              const std::vector<std::pair<Point, Point>>& input) {
+                                 const int64_t distance,
+                                 const std::vector<std::pair<Point, Point>>& input) {
     int64_t x = sensor.x + distance;
     int64_t y = sensor.y;
     while (x >= sensor.x && y >= sensor.y - distance) {
@@ -180,52 +182,48 @@ int64_t checkBottomRightDiagonal(const Point& sensor,
         --x;
         --y;
     }
-    return -1;
+    return INVALID_REQUENCY;
 }
 
 int64_t calculateTuningFrequency(const std::vector<std::pair<Point, Point>>& input) {
-
     for (const auto& pair : input) {
         const auto& sensor = pair.first;
         const auto& beacon = pair.second;
+        const auto distance = calculateDistance(sensor, beacon);
 
-        const auto dis = distance(sensor, beacon);
-        const int64_t maxX = dis;
-        const int64_t maxY = dis;
-
-        if (const auto result = checkTopLeftDiagonal(sensor, dis + 1, input); result != -1) {
+        if (const auto result = checkTopLeftDiagonal(sensor, distance + 1, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkTopLeftDiagonal(sensor, dis + 2, input); result != -1) {
+        if (const auto result = checkTopLeftDiagonal(sensor, distance + 2, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkTopRightDiagonal(sensor, dis + 1, input); result != -1) {
+        if (const auto result = checkTopRightDiagonal(sensor, distance + 1, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkTopRightDiagonal(sensor, dis + 2, input); result != -1) {
+        if (const auto result = checkTopRightDiagonal(sensor, distance + 2, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkBottomLeftDiagonal(sensor, dis + 1, input); result != -1) {
+        if (const auto result = checkBottomLeftDiagonal(sensor, distance + 1, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkBottomLeftDiagonal(sensor, dis + 2, input); result != -1) {
+        if (const auto result = checkBottomLeftDiagonal(sensor, distance + 2, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkBottomRightDiagonal(sensor, dis + 1, input); result != -1) {
+        if (const auto result = checkBottomRightDiagonal(sensor, distance + 1, input); result != INVALID_REQUENCY) {
             return result;
         }
 
-        if (const auto result = checkBottomRightDiagonal(sensor, dis + 2, input); result != -1) {
+        if (const auto result = checkBottomRightDiagonal(sensor, distance + 2, input); result != INVALID_REQUENCY) {
             return result;
         }
     }
-    return -1;
+    return INVALID_REQUENCY;
 }
 }  // namespace
 
