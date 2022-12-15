@@ -102,7 +102,8 @@ set(DAY_SOURCES "src/days/day01.cpp"
                 "src/days/day11.cpp"
                 "src/days/day12.cpp"
                 "src/days/day13.cpp"
-                "src/days/day14.cpp")
+                "src/days/day14.cpp"
+                "src/days/day15.cpp")
 
 add_library(${MAIN_LIBRARY_TARGET_NAME} ${MAIN_LIBRARY_UTIL_SOURCES} ${DAY_SOURCES})
 
@@ -125,7 +126,8 @@ set(TEST_DAY_SOURCES "test/test_day01.cpp"
                      "test/test_day11.cpp"
                      "test/test_day12.cpp"
                      "test/test_day13.cpp"
-                     "test/test_day14.cpp")
+                     "test/test_day14.cpp"
+                     "test/test_day15.cpp")
 
 add_executable(${TEST_EXEC_TARGET_NAME} "test/main.cpp" ${TEST_DAY_SOURCES})
 target_link_libraries(${TEST_EXEC_TARGET_NAME} PRIVATE GTest::gtest GTest::gtest_main ${MAIN_LIBRARY_TARGET_NAME})

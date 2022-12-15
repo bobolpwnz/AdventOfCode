@@ -19,5 +19,6 @@ std::pair<std::string, std::string> day11();
 std::pair<std::string, std::string> day12();
 std::pair<std::string, std::string> day13(bool printOutput = true);
 std::pair<std::string, std::string> day14();
+std::pair<std::string, std::string> day15();
 }  // namespace advent_of_code_2022
 }  // namespace bblp
