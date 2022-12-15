@@ -11,10 +11,10 @@
 
 namespace bblp::advent_of_code_2022 {
 namespace {
-static constexpr int64_t min = 0;
-static constexpr int64_t max = 4000000;
-static constexpr int64_t FREQUENCY_MUL = 4000000;
-static constexpr int64_t INVALID_REQUENCY = -1;
+constexpr int64_t MIN = 0;
+constexpr int64_t MAX = 4000000;
+constexpr int64_t FREQUENCY_MUL = 4000000;
+constexpr int64_t INVALID_REQUENCY = -1;
 
 bool operator<(const Point& lhs, const Point& rhs) {
     return lhs.x < rhs.x;
@@ -29,7 +29,7 @@ Point parsePoint(const std::string& string) {
     const auto strings = split(string, ",");
     const auto stringX = split(strings[0], "=");
     const auto stringY = split(strings[1], "=");
-    return Point(std::stol(stringX[1]), std::stol(stringY[1]));
+    return {std::stol(stringX[1]), std::stol(stringY[1])};
 }
 
 auto parse(const std::filesystem::path& filePath) {
@@ -49,7 +49,7 @@ auto parse(const std::filesystem::path& filePath) {
     return input;
 }
 
-int32_t calculateDistance(const Point& from, const Point& to) {
+int64_t calculateDistance(const Point& from, const Point& to) {
     return std::abs(from.x - to.x) + std::abs(from.y - to.y);
 }
 
@@ -57,17 +57,15 @@ bool isInRangeOfSensor(const Point& target, const Point& sensor, const Point& be
     return (calculateDistance(target, sensor) <= calculateDistance(beacon, sensor));
 }
 
-int32_t findMin(const Point& sensor, const Point& beacon) {}
-
-int32_t minLeft(const Point& sensor, const Point& beacon) {
+int64_t minLeft(const Point& sensor, const Point& beacon) {
     return sensor.x - std::abs(beacon.x);
 }
 
-int32_t maxRight(const Point& sensor, const Point& beacon) {
+int64_t maxRight(const Point& sensor, const Point& beacon) {
     return sensor.x + std::abs(beacon.x);
 }
 
-int32_t calculateNumberOfInvalidPositions(const std::vector<std::pair<Point, Point>>& input) {
+int64_t calculateNumberOfInvalidPositions(const std::vector<std::pair<Point, Point>>& input) {
     const auto minIter = std::min_element(input.cbegin(), input.cend(), [](const auto& lhs, const auto& rhs) {
         return minLeft(lhs.first, lhs.second) < minLeft(rhs.first, rhs.second);
     });
@@ -76,12 +74,12 @@ int32_t calculateNumberOfInvalidPositions(const std::vector<std::pair<Point, Poi
         return maxRight(lhs.first, lhs.second) < maxRight(rhs.first, rhs.second);
     });
 
-    const auto min = minLeft(minIter->first, minIter->second);
-    const auto max = maxRight(maxIter->first, maxIter->second);
+    const auto minX = minLeft(minIter->first, minIter->second);
+    const auto maxX = maxRight(maxIter->first, maxIter->second);
 
-    const int32_t targetRow = 2000000;
+    const int64_t targetRow = 2000000;
     int32_t numberOfInvalidPositions = 0;
-    for (int32_t x = min; x <= max; ++x) {
+    for (int64_t x = minX; x <= maxX; ++x) {
         const Point target(x, targetRow);
         for (const auto& pair : input) {
             if (target == pair.first || target == pair.second) {
@@ -97,27 +95,20 @@ int32_t calculateNumberOfInvalidPositions(const std::vector<std::pair<Point, Poi
 }
 
 bool isInRangeOfOtherSensors(const Point& target,
-                             const Point& currentSensor,
                              const std::vector<std::pair<Point, Point>>& input) {
-    for (const auto& other : input) {
-        if (currentSensor == other.first) {
-            continue;
-        }
 
-        if (isInRangeOfSensor(target, other.first, other.second)) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(input.cbegin(), input.cend(), [&target](const std::pair<Point, Point>& pair) {
+        return isInRangeOfSensor(target, pair.first, pair.second);
+    });
 }
 
 bool isPointValid(const Point& point) {
-    return point.x >= min && point.x <= max && point.y >= min && point.y <= max;
+    return point.x >= MIN && point.x <= MAX && point.y >= MIN && point.y <= MAX;
 }
 
-bool checkPoint(const Point& point, const Point& sensor, const std::vector<std::pair<Point, Point>>& input) {
+bool checkPoint(const Point& point, const std::vector<std::pair<Point, Point>>& input) {
     if (isPointValid(point)) {
-        if (!isInRangeOfOtherSensors(point, sensor, input)) {
+        if (!isInRangeOfOtherSensors(point, input)) {
             return false;
         }
     }
@@ -130,7 +121,7 @@ int64_t checkTopLeftDiagonal(const Point& sensor,
     int64_t x = sensor.x - distance;
     int64_t y = sensor.y;
     while (x <= sensor.x && y >= sensor.y - distance) {
-        if (!checkPoint(Point(x, y), sensor, input)) {
+        if (!checkPoint(Point(x, y), input)) {
             return x * FREQUENCY_MUL + y;
         }
         ++x;
@@ -145,7 +136,7 @@ int64_t checkTopRightDiagonal(const Point& sensor,
     int64_t x = sensor.x + distance;
     int64_t y = sensor.y;
     while (x >= sensor.x && y <= sensor.y + distance) {
-        if (!checkPoint(Point(x, y), sensor, input)) {
+        if (!checkPoint(Point(x, y), input)) {
             return x * FREQUENCY_MUL + y;
         }
 
@@ -161,7 +152,7 @@ int64_t checkBottomLeftDiagonal(const Point& sensor,
     int64_t x = sensor.x - distance;
     int64_t y = sensor.y;
     while (x <= sensor.x && y <= sensor.y + distance) {
-        if (!checkPoint(Point(x, y), sensor, input)) {
+        if (!checkPoint(Point(x, y), input)) {
             return x * FREQUENCY_MUL + y;
         }
         ++x;
@@ -176,7 +167,7 @@ int64_t checkBottomRightDiagonal(const Point& sensor,
     int64_t x = sensor.x + distance;
     int64_t y = sensor.y;
     while (x >= sensor.x && y >= sensor.y - distance) {
-        if (!checkPoint(Point(x, y), sensor, input)) {
+        if (!checkPoint(Point(x, y), input)) {
             return x * FREQUENCY_MUL + y;
         }
         --x;

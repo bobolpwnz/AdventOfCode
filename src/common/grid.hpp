@@ -8,24 +8,26 @@
 
 namespace bblp::advent_of_code_2022 {
 
-template <typename TileType>
+template <typename TileType, typename DimensionType = int64_t>
 class Grid {
   public:
-    Grid(const int32_t width, const int32_t height, TileType val)
+    Grid(const int64_t width, const DimensionType height, TileType val)
         : mWidth(width), mHeight(height), mTiles(width * height, val) {}
 
-    Grid(const int32_t width, const int32_t height, std::vector<TileType> tiles)
+    Grid(const int64_t width, const DimensionType height, std::vector<TileType> tiles)
         : mWidth(width), mHeight(height), mTiles(std::move(tiles)) {}
 
-    [[nodiscard]] inline int32_t width() const { return mWidth; }
-    [[nodiscard]] inline int32_t height() const { return mHeight; }
+    [[nodiscard]] inline DimensionType width() const { return mWidth; }
+    [[nodiscard]] inline DimensionType height() const { return mHeight; }
 
     [[nodiscard]] inline TileType at(const Point& point) const { return at(point.x, point.y); }
-    [[nodiscard]] inline TileType at(const int32_t x, const int32_t y) const {
+    [[nodiscard]] inline TileType at(const DimensionType x, const DimensionType y) const {
         return mTiles.at(y * mWidth + x);
     }
     [[nodiscard]] inline TileType& at(const Point& point) { return at(point.x, point.y); }
-    [[nodiscard]] inline TileType& at(const int32_t x, const int32_t y) { return mTiles.at(y * mWidth + x); }
+    [[nodiscard]] inline TileType& at(const DimensionType x, const DimensionType y) {
+        return mTiles.at(y * mWidth + x);
+    }
 
     [[nodiscard]] inline std::optional<Point> find(const TileType value) const {
         for (auto x = 0; x < mWidth; ++x) {
@@ -39,11 +41,11 @@ class Grid {
     }
 
     void set(const Point& point, TileType value) { set(point.x, point.y, value); }
-    void set(const int32_t x, const int32_t y, TileType value) { mTiles[y * mWidth + x] = value; }
+    void set(const DimensionType x, const DimensionType y, TileType value) { mTiles[y * mWidth + x] = value; }
 
   private:
-    int32_t mWidth;
-    int32_t mHeight;
+    DimensionType mWidth;
+    DimensionType mHeight;
     std::vector<TileType> mTiles;
 };
 }  // namespace bblp::advent_of_code_2022

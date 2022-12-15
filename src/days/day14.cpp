@@ -15,11 +15,11 @@ namespace bblp::advent_of_code_2022 {
 namespace {
 
 struct Line {
-    bool isHorizontal() const { return start.y == end.y; }
-    bool isVertical() const { return start.x == end.x; }
+    [[nodiscard]] bool isHorizontal() const noexcept { return start.y == end.y; }
+    [[nodiscard]] bool isVertical() const noexcept { return start.x == end.x; }
 
-    int32_t horizontalLength() const { return end.x - start.x + 1; }
-    int32_t verticalLength() const { return end.y - start.y + 1; }
+    [[nodiscard]] int64_t horizontalLength() const noexcept { return end.x - start.x + 1; }
+    [[nodiscard]] int64_t verticalLength() const noexcept { return end.y - start.y + 1; }
 
     Point start;
     Point end;
@@ -46,7 +46,7 @@ Line normalize(const Point& start, const Point& end) {
 
 Point parsePoint(const std::string& string) {
     const auto coords = split(string, ",");
-    return Point(std::stol(coords[0]), std::stol(coords[1]));
+    return {std::stol(coords[0]), std::stol(coords[1])};
 }
 
 auto parse(const std::filesystem::path& filePath) {
@@ -88,10 +88,10 @@ constexpr int32_t GRID_WIDTH = 1000;
 constexpr int32_t GRID_HEIGHT = 1000;
 constexpr Point SAND_START(500, 0);
 
-static constexpr char TILE_AIR = '.';
-static constexpr char TILE_ROCK = '#';
-static constexpr char TILE_SAND = 'o';
-static constexpr char TILE_SPAWN = '+';
+constexpr char TILE_AIR = '.';
+constexpr char TILE_ROCK = '#';
+constexpr char TILE_SAND = 'o';
+constexpr char TILE_SPAWN = '+';
 
 void markInitial(Grid<char>& grid, const std::vector<Line>& lines) {
     for (const auto& line : lines) {
@@ -145,7 +145,7 @@ int32_t simulate(Grid<char>& grid) {
     return numberOfSandSpawned;
 }
 
-void saveToFile(const Grid<char>& grid, std::filesystem::path fileName) {
+void saveToFile(const Grid<char>& grid, const std::filesystem::path& fileName) {
     std::ofstream output(fileName);
     printGrid(output, grid, Point(0, 0), Point(GRID_WIDTH, GRID_HEIGHT));
 }

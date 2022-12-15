@@ -33,7 +33,7 @@ struct List {
                     return std::weak_ordering::greater;
                 }
             } else if (!isLeftInt && !isRightInt) {
-                const auto cmp = std::get<List>(*leftIter) <=> std::get<List>(*rightIter);
+                const std::weak_ordering cmp = std::get<List>(*leftIter) <=> std::get<List>(*rightIter);
                 if (cmp < 0) {
                     return std::weak_ordering::less;
                 } else if (cmp > 0) {
@@ -42,7 +42,7 @@ struct List {
             } else if (isLeftInt && !isRightInt) {
                 List leftList;
                 leftList.content.push_back(*leftIter);
-                const auto cmp = leftList <=> std::get<List>(*rightIter);
+                const std::weak_ordering cmp = leftList <=> std::get<List>(*rightIter);
                 if (cmp < 0) {
                     return std::weak_ordering::less;
                 } else if (cmp > 0) {
@@ -51,7 +51,7 @@ struct List {
             } else if (!isLeftInt && isRightInt) {
                 List rightList;
                 rightList.content.push_back(*rightIter);
-                const auto cmp = std::get<List>(*leftIter) <=> rightList;
+                const std::weak_ordering cmp = std::get<List>(*leftIter) <=> rightList;
                 if (cmp < 0) {
                     return std::weak_ordering::less;
                 } else if (cmp > 0) {
@@ -136,7 +136,7 @@ List parseList(const std::string& string) {
             const auto closingBracketPos = findMatchingClosingBracketPos(i, string);
             const auto subLineString = string.substr(i + 1,  closingBracketPos - i - 1);
             const auto innerList = parseList(subLineString);
-            list.content.push_back(innerList);
+            list.content.emplace_back(innerList);
             i = closingBracketPos + 1;
         } else if (c >= '0' && c <= '9') {
             auto numberSize = 1U;
@@ -147,7 +147,7 @@ List parseList(const std::string& string) {
 
             const auto number = std::stol(string.substr(i, numberSize));
             i += numberSize - 1;
-            list.content.push_back(number);
+            list.content.emplace_back(number);
         }
     }
 
@@ -186,7 +186,7 @@ int32_t calculateSumOfCorrectPackets(const std::vector<Packet>& packets, const b
             if (printOutput) {
                 std::cout << "(Y) " << first.items << " vs " << second.items << '\n';
             }
-            sumOfCorrectPacketsIndices += index / 2 + 1;
+            sumOfCorrectPacketsIndices += static_cast<int32_t>(index) / 2 + 1;
         } else {
             if (printOutput) {
                 std::cout << "(N) " << first.items << " vs " << second.items << '\n';
@@ -198,8 +198,8 @@ int32_t calculateSumOfCorrectPackets(const std::vector<Packet>& packets, const b
 
 int32_t calculateDecoderKey(const std::vector<Packet>& packets, const bool printOutput) {
     std::vector<Packet> extended = packets;
-    Packet packet1 = parsePacket("[[2]]");
-    Packet packet2 = parsePacket("[[6]]");
+    const Packet packet1 = parsePacket("[[2]]");
+    const Packet packet2 = parsePacket("[[6]]");
     extended.push_back(packet1);
     extended.push_back(packet2);
 
@@ -219,7 +219,7 @@ int32_t calculateDecoderKey(const std::vector<Packet>& packets, const bool print
             std::cout << extended.at(i).items << '\n';
         }
     }
-    return index1 * index2;
+    return static_cast<int32_t>(index1 * index2);
 }
 }  // namespace
 
