@@ -18,8 +18,6 @@ std::ostream& operator<<(std::ostream& stream, const List& list);
 
 struct List {
     std::weak_ordering operator<=>(const List& other) const {
-        // std::cout << "Comparing: " << *this << " vs " << other << '\n';
-
         auto leftIter = content.cbegin();
         auto rightIter = other.content.cbegin();
 
@@ -179,22 +177,26 @@ bool arePacketsInCorrectOrder(const Packet& first, const Packet& second) {
     return first <= second;
 }
 
-int32_t calculateSumOfCorrectPackets(const std::vector<Packet>& packets) {
+int32_t calculateSumOfCorrectPackets(const std::vector<Packet>& packets, const bool printOutput) {
     auto sumOfCorrectPacketsIndices = 0;
     for (auto index = 0U; index < packets.size() - 1; index += 2) {
         const auto& first = packets.at(index);
         const auto& second = packets.at(index + 1);
         if (arePacketsInCorrectOrder(first, second)) {
-            std::cout << "(Y) " << first.items << " vs " << second.items << '\n';
+            if (printOutput) {
+                std::cout << "(Y) " << first.items << " vs " << second.items << '\n';
+            }
             sumOfCorrectPacketsIndices += index / 2 + 1;
         } else {
-            std::cout << "(N) " << first.items << " vs " << second.items << '\n';
+            if (printOutput) {
+                std::cout << "(N) " << first.items << " vs " << second.items << '\n';
+            }
         }
     }
     return sumOfCorrectPacketsIndices;
 }
 
-int32_t calculateDecoderKey(const std::vector<Packet>& packets) {
+int32_t calculateDecoderKey(const std::vector<Packet>& packets, const bool printOutput) {
     std::vector<Packet> extended = packets;
     Packet packet1 = parsePacket("[[2]]");
     Packet packet2 = parsePacket("[[6]]");
@@ -212,20 +214,19 @@ int32_t calculateDecoderKey(const std::vector<Packet>& packets) {
         if (extended.at(i) == packet2) {
             index2 = i + 1;
         }
-        std::cout << extended.at(i).items << '\n';
+
+        if (printOutput) {
+            std::cout << extended.at(i).items << '\n';
+        }
     }
-
-    std::cout << index1 << '\n';
-    std::cout << index2 << '\n';
-
     return index1 * index2;
 }
 }  // namespace
 
-std::pair<std::string, std::string> day13() {
+std::pair<std::string, std::string> day13(bool printOutput) {
     const auto input = parse("resources/day13.txt");
-    const auto sumOfCorrectPackets = calculateSumOfCorrectPackets(input);
-    const auto decoderKey = calculateDecoderKey(input);
+    const auto sumOfCorrectPackets = calculateSumOfCorrectPackets(input, printOutput);
+    const auto decoderKey = calculateDecoderKey(input, printOutput);
 
     return {std::to_string(sumOfCorrectPackets), std::to_string(decoderKey)};
 }

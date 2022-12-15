@@ -21,7 +21,11 @@ class Grid {
     [[nodiscard]] inline int32_t height() const { return mHeight; }
 
     [[nodiscard]] inline TileType at(const Point& point) const { return at(point.x, point.y); }
-    [[nodiscard]] inline TileType at(const int32_t x, const int32_t y) const { return mTiles.at(y * mWidth + x); }
+    [[nodiscard]] inline TileType at(const int32_t x, const int32_t y) const {
+        return mTiles.at(y * mWidth + x);
+    }
+    [[nodiscard]] inline TileType& at(const Point& point) { return at(point.x, point.y); }
+    [[nodiscard]] inline TileType& at(const int32_t x, const int32_t y) { return mTiles.at(y * mWidth + x); }
 
     [[nodiscard]] inline std::optional<Point> find(const TileType value) const {
         for (auto x = 0; x < mWidth; ++x) {
