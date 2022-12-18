@@ -30,6 +30,7 @@ class Graph {
   public:
     void buildConnections();
     void buildShortestPaths();
+    std::vector<Node*> findShortestPath(Node& start, Node& end);
 
     Node* findNode(const std::string& label);
     const Node* findNode(const std::string& label) const;
@@ -39,8 +40,6 @@ class Graph {
     std::vector<std::unique_ptr<Node>> nodes;
 
   private:
-    void buildShortestPaths(Node& node);
-    std::vector<Node*> findShortestPath(Node& start, Node& end);
 };
 
 void Graph::buildConnections() {
@@ -132,6 +131,8 @@ std::vector<Node*> Graph::findShortestPath(Node& start, Node& end) {
 namespace bblp::advent_of_code_2022 {
 namespace {
 
+constexpr int32_t MINUTES = 30;
+
 std::vector<std::string> parseConnections(const std::string& string) {
     static constexpr std::string_view VALVE = "valve";
 
@@ -167,88 +168,64 @@ auto parse(const std::filesystem::path& filePath) {
     return input;
 }
 
-static constexpr int32_t MINUTES = 30;
+struct Evalution {
+    constexpr auto operator<=>(const Evalution& other) noexcept { return value <=> other.value; }
 
-enum Action { MOVE, OPEN };
-
-struct Step {
-    Step(Action action, const Node* node, std::list<const Node*> unvisited)
-        : action(action), node(node), unvisited(std::move(unvisited)) {}
-
-    Action action;
-    const Node* node;
-    std::list<const Node*> unvisited;
+    Node* node;
+    int32_t value;
 };
 
-int32_t calculateValveGain(const FlowRate flowRate, const int32_t minute) {
-    return flowRate * (MINUTES - minute);
-}
+struct Step {
+    Step(const Node* node, std::vector<Evalution> unvisited) : node(node), unvisited(std::move(unvisited)) {}
 
-void printPath(std::ostream& stream, const std::list<Step>& path) {
-    stream << "Path: ";
-    for (const auto& step : path) {
-        stream << " " << step.node->label;
+    const Node* node;
+    std::vector<Evalution> unvisited;
+};
+
+int32_t evaluateAtDepth(const Graph& graph, std::set<const Node*>& opened, const Node* currentNode, const int32_t currentMinute) {
+    const auto timeLeft = MINUTES - currentMinute;
+    int32_t bestScore = 0;
+
+    std::vector<Evalution> evaluations;
+    evaluations.reserve(graph.nodes.size() - 1);
+
+    for (const auto& path : currentNode->paths) {
+        const auto distance = path.second.size() - 1;
+        const auto score = path.first->flowRate * (timeLeft - distance - 1);
+
+        const auto iter = opened.find(path.first);
+        if (iter == opened.end() && score != 0) {
+            const auto& eval = evaluations.emplace_back(path.first, score);
+        }
     }
-    stream << '\n';
-}
 
-bool isOpen(const Node* node, const std::list<Step>& path) {
-    return std::find_if(path.cbegin(), path.cend(), [&node](const Step& step) {
-               return (step.node == node && step.action == Action::OPEN);
-           }) != path.cend();
+    for (const auto& eval : evaluations) {
+        int32_t evalScore = 0;
+        const auto& path = currentNode->paths.at(eval.node);
+        const auto distance = path.size() - 1;
+        if (distance <= timeLeft - 1) {
+            opened.insert(eval.node);
+            const int32_t evalScore = eval.value + evaluateAtDepth(graph, opened, eval.node, currentMinute + distance + 1);
+            opened.erase(eval.node);
+
+            if (bestScore < evalScore) {
+                bestScore = evalScore;
+            }
+        }
+    }
+
+    return bestScore;
 }
 
 int32_t findMaxPossiblePressure(const Graph& graph) {
-    std::ofstream output("resources/day16_1.txt");
-
     const Node* startingNode = graph.findNode("AA");
 
+
     std::set<const Node*> opened;
-    const Node* currentNode = startingNode;
     int32_t currentMinute = 0;
     int32_t totalScore = 0;
-    while (currentMinute < MINUTES) {
 
-        std::cout << "Current node is " << currentNode->label << '\n';
-
-        const auto timeLeft = MINUTES - currentMinute;
-
-        std::vector<std::pair<Node*, int32_t>> evaluation;
-        evaluation.reserve(graph.nodes.size() - 1);
-
-        for (const auto& path : currentNode->paths) {
-            const auto distance = path.second.size() - 1;
-            const auto score = path.first->flowRate * (timeLeft - distance - 1);
-
-            const auto iter = opened.find(path.first);
-            if (iter == opened.end() && score != 0) {
-                evaluation.emplace_back(std::make_pair(path.first, score));
-                std::cout << "Evaluation for node " << path.first->label << " is " << score << '\n';
-            }
-        }
-
-        std::sort(evaluation.begin(), evaluation.end(), [](const auto& first, const auto& second) { return first.second < second.second; });
-
-        if (evaluation.empty()) {
-            currentMinute = MINUTES;
-        } else {
-            auto maxIter =
-                std::max_element(evaluation.cbegin(), evaluation.cend(),
-                                 [](const auto& first, const auto& second) { return first.second < second.second; });
-
-            auto& path = currentNode->paths.at(maxIter->first);
-            const auto distance = path.size();
-            if (distance <= timeLeft - 1) {
-                totalScore += maxIter->first->flowRate * (timeLeft - distance - 1);
-                opened.insert(maxIter->first);
-            }
-
-            currentMinute += distance + 1;
-            currentNode = maxIter->first;
-        }
-    }
-
-    return totalScore;
+    return evaluateAtDepth(graph, opened, startingNode, 0);
 }
 }  // namespace
 
