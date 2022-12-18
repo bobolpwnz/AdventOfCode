@@ -10,6 +10,7 @@
 #include <numeric>
 #include <queue>
 #include <stack>
+#include <set>
 #include <unordered_map>
 #include <vector>
 
@@ -39,6 +40,7 @@ class Graph {
 
   private:
     void buildShortestPaths(Node& node);
+    std::vector<Node*> findShortestPath(Node& start, Node& end);
 };
 
 void Graph::buildConnections() {
@@ -53,8 +55,14 @@ void Graph::buildConnections() {
 }
 
 void Graph::buildShortestPaths() {
-    for (auto& node : nodes) {
-        buildShortestPaths(*node);
+    for (auto& start : nodes) {
+        for (auto& end : nodes) {
+            if (start.get() == end.get()) {
+                continue;
+            }
+
+            start->paths[end.get()] = findShortestPath(*start, *end);
+        }
     }
 }
 
@@ -70,72 +78,55 @@ const Node* Graph::findNode(const std::string& label) const {
     return (iter != nodes.end() ? iter->get() : nullptr);
 }
 
-void Graph::buildShortestPaths(Node& start) {
+std::vector<Node*> Graph::findShortestPath(Node& start, Node& end) {
     using p = std::pair<int32_t, const Node*>;
 
-    std::unordered_map<Node*, bool> added;
-    std::unordered_map<Node*, int32_t> shortestDistances;
-    for (const auto& node : nodes) {
-        added[node.get()] = false;
-        shortestDistances[node.get()] = INT32_MAX;
-    }
-    shortestDistances[&start] = 0;
-
+    std::unordered_map<Node*, bool> visited;
+    std::unordered_map<Node*, int32_t> distances;
     std::unordered_map<Node*, Node*> parents;
+    for (const auto& node : nodes) {
+        visited[node.get()] = false;
+        distances[node.get()] = INT32_MAX;
+        parents[node.get()] = nullptr;
+    }
+    distances[&start] = 0;
     parents[&start] = nullptr;
 
-    for (const auto& n : nodes) {
-        Node* nearestNode = nullptr;
-        int shortestDistance = INT_MAX;
-        for (const auto& node : nodes) {
-            const auto nodePtr = node.get();
+    std::list<Node*> queue;
+    queue.push_back(&start);
 
-            if (added[nodePtr]) {
+    while (!queue.empty()) {
+        Node* currentNode = queue.front();
+        queue.pop_front();
+
+        for (auto& connection : currentNode->connections) {
+            if (visited[connection]) {
                 continue;
             }
 
-            if (shortestDistances[node.get()] < shortestDistance) {
-                nearestNode = node.get();
-                shortestDistance = shortestDistances[node.get()];
-            }
-        }
+            visited[connection] = true;
+            distances[connection] = distances[currentNode];
+            parents[connection] = currentNode;
+            queue.push_back(connection);
 
-        added[nearestNode] = true;
-
-        for (auto& m : nodes) {
-            Node* connection = m.get();
-            const auto iter = std::find(n->connections.cbegin(), n->connections.cend(), connection);
-            if (iter == n->connections.cend()) {
-                continue;
-            }
-
-            int edgeDistance = 1;
-
-            if (edgeDistance > 0 && ((shortestDistance + edgeDistance) < shortestDistances[connection])) {
-                parents[connection] = nearestNode;
-                shortestDistances[connection] = shortestDistance + edgeDistance;
+            if (connection == &end) {
+                queue.clear();
+                break;
             }
         }
     }
 
-    for (const auto& destinationNode : nodes) {
-        if (destinationNode.get() == &start) {
-            continue;
-        }
-
-        Node* currentNode = destinationNode.get();
-        std::vector<Node*> path;
-        path.emplace_back(currentNode);
-        while (currentNode != &start) {
-            Node* parent = parents[currentNode];
-            path.push_back(parent);
-            currentNode = parent;
-        }
-
-        std::reverse(path.begin(), path.end());
-
-        start.paths[destinationNode.get()] = path;
+    std::vector<Node*> path;
+    Node* currentNode = &end;
+    path.emplace_back(currentNode);
+    while (currentNode != &start) {
+        Node* parent = parents[currentNode];
+        path.push_back(parent);
+        currentNode = parent;
     }
+
+    std::reverse(path.begin(), path.end());
+    return path;
 }
 
 namespace bblp::advent_of_code_2022 {
@@ -211,59 +202,59 @@ int32_t findMaxPossiblePressure(const Graph& graph) {
     std::ofstream output("resources/day16_1.txt");
 
     const Node* startingNode = graph.findNode("AA");
-    std::list<Step> path;
-    path.push_back(Step(Action::MOVE, startingNode,
-                        std::list<const Node*>(startingNode->connections.cbegin(), startingNode->connections.cend())));
 
-    return 0;
-    while (!path.empty()) {
-        printPath(std::cout, path);
-        Step& currentStep = path.back();
+    std::set<const Node*> opened;
+    const Node* currentNode = startingNode;
+    int32_t currentMinute = 0;
+    int32_t totalScore = 0;
+    while (currentMinute < MINUTES) {
 
-        if (path.size() >= MINUTES) {
-            path.pop_back();
+        std::cout << "Current node is " << currentNode->label << '\n';
+
+        const auto timeLeft = MINUTES - currentMinute;
+
+        std::vector<std::pair<Node*, int32_t>> evaluation;
+        evaluation.reserve(graph.nodes.size() - 1);
+
+        for (const auto& path : currentNode->paths) {
+            const auto distance = path.second.size() - 1;
+            const auto score = path.first->flowRate * (timeLeft - distance - 1);
+
+            const auto iter = opened.find(path.first);
+            if (iter == opened.end() && score != 0) {
+                evaluation.emplace_back(std::make_pair(path.first, score));
+                std::cout << "Evaluation for node " << path.first->label << " is " << score << '\n';
+            }
         }
 
-        if (currentStep.unvisited.empty()) {
-            path.pop_back();
-        }
+        std::sort(evaluation.begin(), evaluation.end(), [](const auto& first, const auto& second) { return first.second < second.second; });
 
-        auto nextNode = currentStep.unvisited.front();
-        if (!isOpen(currentStep.node, path)) {
-            std::vector<std::pair<const Node*, int32_t>> gains;
-            gains.reserve(currentStep.unvisited.size());
-            gains.emplace_back(currentStep.node, calculateValveGain(currentStep.node->flowRate, path.size()));
-            for (const auto& unvisited : currentStep.unvisited) {
-                gains.emplace_back(unvisited, calculateValveGain(unvisited->flowRate, path.size() + 1));
+        if (evaluation.empty()) {
+            currentMinute = MINUTES;
+        } else {
+            auto maxIter =
+                std::max_element(evaluation.cbegin(), evaluation.cend(),
+                                 [](const auto& first, const auto& second) { return first.second < second.second; });
+
+            auto& path = currentNode->paths.at(maxIter->first);
+            const auto distance = path.size();
+            if (distance <= timeLeft - 1) {
+                totalScore += maxIter->first->flowRate * (timeLeft - distance - 1);
+                opened.insert(maxIter->first);
             }
 
-            const auto max = std::max_element(gains.cbegin(), gains.cend(), [](const auto& first, const auto& second) {
-                return first.second < second.second;
-            });
-
-            nextNode = max->first;
-        }
-
-        if (nextNode == currentStep.node) {
-            path.push_back(Step(Action::OPEN, nextNode,
-                                std::list<const Node*>(nextNode->connections.cbegin(), nextNode->connections.cend())));
-        } else {
-            path.push_back(Step(Action::MOVE, nextNode,
-                                std::list<const Node*>(nextNode->connections.cbegin(), nextNode->connections.cend())));
-            currentStep.unvisited.clear();
+            currentMinute += distance + 1;
+            currentNode = maxIter->first;
         }
     }
 
-    for (auto currentMinute = 1; currentMinute <= MINUTES; ++currentMinute) {
-    }
-
-    return 0;
+    return totalScore;
 }
 }  // namespace
 
 std::pair<std::string, std::string> day16() {
     const auto input = parse("resources/day16.txt");
     const auto pressure = findMaxPossiblePressure(input);
-    return {"", ""};
+    return {std::to_string(pressure), ""};
 }
 }  // namespace bblp::advent_of_code_2022
