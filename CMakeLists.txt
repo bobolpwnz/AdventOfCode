@@ -17,10 +17,10 @@ FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
 
 project(
-  advent_of_code_2022
+  advent_of_code
   VERSION 0.0.1
-  DESCRIPTION "Advent of Code 2022"
-  HOMEPAGE_URL "https://github.com/bobolpwnz/AdventOfCode2022"
+  DESCRIPTION "Advent of Code"
+  HOMEPAGE_URL "https://github.com/bobolpwnz/AdventOfCode"
   LANGUAGES CXX)
 
 get_property(BUILDING_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -82,4 +82,7 @@ if(MSVC)
   set_target_properties(${all_targets} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=$(VC_ExecutablePath_x64);%PATH%")
 endif()
 
+set(AOC_LIB_NAME "aoclib")
+
+add_subdirectory(aoclib)
 add_subdirectory(2022)

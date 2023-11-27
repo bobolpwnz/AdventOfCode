@@ -3,6 +3,7 @@ set(MAIN_LIBRARY_TARGET_NAME "lib${TARGET_BASE_NAME}")
 set(MAIN_EXEC_TARGET_NAME ${TARGET_BASE_NAME})
 set(TEST_EXEC_TARGET_NAME "${MAIN_EXEC_TARGET_NAME}_ut")
 
+find_package(GTest REQUIRED)
 
 set(MAIN_LIBRARY_UTIL_SOURCES "src/common/file_utils.cpp" "src/common/string_utils.cpp")
 set(DAY_SOURCES "src/days/day01.cpp" 
@@ -23,12 +24,13 @@ set(DAY_SOURCES "src/days/day01.cpp"
                 "src/days/day16.cpp")
 
 add_library(${MAIN_LIBRARY_TARGET_NAME} ${MAIN_LIBRARY_UTIL_SOURCES} ${DAY_SOURCES})
-
 add_executable(${MAIN_EXEC_TARGET_NAME} "src/main.cpp")
-target_link_libraries(${MAIN_EXEC_TARGET_NAME} PRIVATE ${MAIN_LIBRARY_TARGET_NAME})
+
+target_link_libraries(${MAIN_LIBRARY_TARGET_NAME} PUBLIC ${AOC_LIB_NAME})
 target_include_directories(${MAIN_LIBRARY_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-find_package(GTest REQUIRED)
+target_link_libraries(${MAIN_EXEC_TARGET_NAME} PUBLIC ${MAIN_LIBRARY_TARGET_NAME} ${AOC_LIB_NAME})
+
 
 set(TEST_DAY_SOURCES "test/test_day01.cpp"
                      "test/test_day02.cpp"
@@ -56,5 +58,3 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_CURRENT_SOURCE_DIR}/resources
                 ${CMAKE_CURRENT_BINARY_DIR}/resources)
-
-message("!!! ${CMAKE_CURRENT_SOURCE_DIR}/src")
