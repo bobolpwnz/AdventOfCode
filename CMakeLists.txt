@@ -86,3 +86,4 @@ set(AOC_LIB_NAME "aoclib")
 
 add_subdirectory(aoclib)
 add_subdirectory(2022)
+add_subdirectory(2023)

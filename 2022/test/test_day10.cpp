@@ -2,7 +2,7 @@
 
 #include "days/days.hpp"
 
-namespace bblp::advent_of_code_2022::test {
+namespace bblp::aoc::test {
 TEST(Day10, test) {
     static constexpr bool printOutput = false;
 
@@ -14,4 +14,4 @@ TEST(Day10, test) {
         "#..#.####..##..#..#.",
         result.second);
 }
-};  // namespace bblp::advent_of_code_2022::test
+};  // namespace bblp::aoc::test
