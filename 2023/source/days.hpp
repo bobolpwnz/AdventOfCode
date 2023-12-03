@@ -7,5 +7,6 @@ namespace bblp {
 namespace aoc {
 std::pair<std::string, std::string> day01();
 std::pair<std::string, std::string> day02();
+std::pair<std::string, std::string> day03();
 }  // namespace aoc
 }  // namespace bblp
