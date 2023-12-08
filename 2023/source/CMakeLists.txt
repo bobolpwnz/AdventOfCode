@@ -1,4 +1,12 @@
-set(AOC_2023_LIB_SOURCES "day01.cpp" "day02.cpp" "day03.cpp" "day04.cpp" "day05.cpp" "day06.cpp" "day07.cpp")
+set(AOC_2023_LIB_SOURCES "day01.cpp"
+                         "day02.cpp"
+                         "day03.cpp"
+                         "day04.cpp"
+                         "day05.cpp"
+                         "day06.cpp"
+                         "day07.cpp"
+                         "day08.cpp"
+)
 
 add_library(${AOC_2023_LIB_NAME} ${AOC_2023_LIB_SOURCES})
 target_link_libraries(${AOC_2023_LIB_NAME} PUBLIC ${AOC_LIB_NAME})
