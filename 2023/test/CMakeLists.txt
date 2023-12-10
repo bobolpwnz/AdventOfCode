@@ -8,6 +8,7 @@ set(TEST_DAY_SOURCES "test_day01.cpp"
                      "test_day06.cpp"
                      "test_day07.cpp"
                      "test_day08.cpp"
+                     "test_day09.cpp"
 )
 
 add_executable(${AOC_2023_TEST_NAME} "main.cpp" ${TEST_DAY_SOURCES})
