@@ -9,6 +9,9 @@ class Point {
     constexpr Point(const int64_t x, const int64_t y) : x(x), y(y) {}
 
     [[nodiscard]] bool operator==(const Point& other) const noexcept { return (x == other.x) && (y == other.y); }
+    [[nodiscard]] bool operator<(const Point& other) const noexcept {
+        return (x < other.x) || ((!(other.x < x)) && (y < other.y));
+    }
 
     int64_t x;
     int64_t y;
