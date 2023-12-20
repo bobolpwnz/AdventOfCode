@@ -22,5 +22,6 @@ std::pair<std::string, std::string> day14();
 std::pair<std::string, std::string> day15();
 std::pair<std::string, std::string> day16();
 std::pair<std::string, std::string> day17();
+std::pair<std::string, std::string> day20();
 }  // namespace aoc
 }  // namespace bblp

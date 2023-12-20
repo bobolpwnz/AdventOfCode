@@ -18,7 +18,7 @@
 namespace bblp::aoc {
 namespace {
 
-struct Node {
+struct Module {
     std::string left;
     std::string right;
 };
@@ -26,7 +26,7 @@ struct Node {
 struct Network {
     std::string instructions;
 
-    std::unordered_map<std::string, Node> nodes;
+    std::unordered_map<std::string, Module> nodes;
 };
 
 auto parse(const std::filesystem::path& filePath) {
@@ -45,7 +45,7 @@ auto parse(const std::filesystem::path& filePath) {
             const auto parts = split(line, "=");
             const auto nodeParts = split(trim(parts.back()), ",");
             input.nodes.insert(
-                {trim(parts.front()), Node{trim(nodeParts.front().substr(1U)),
+                {trim(parts.front()), Module{trim(nodeParts.front().substr(1U)),
                                            trim(nodeParts.back().substr(0U, nodeParts.back().length() - 1U))}});
         }
     };
@@ -57,7 +57,7 @@ uint64_t calculatePartOne(const Network& input) {
     uint64_t result{0U};
     uint64_t currentStep{0U};
     std::string currentNodeName{"AAA"};
-    const Node* currentNode{&input.nodes.at(currentNodeName)};
+    const Module* currentNode{&input.nodes.at(currentNodeName)};
 
     while (currentNodeName != "ZZZ") {
         const auto direction = input.instructions.at(currentStep);
@@ -92,7 +92,7 @@ uint64_t calculatePartTwo(const Network& input) {
         uint64_t result{0U};
         uint64_t currentStep{0U};
         std::string currentNodeName{nodeName};
-        const Node* currentNode{&input.nodes.at(currentNodeName)};
+        const Module* currentNode{&input.nodes.at(currentNodeName)};
 
         while (currentNodeName.back() != 'Z') {
             const auto direction = input.instructions.at(currentStep);
