@@ -20,7 +20,7 @@ Application::Application(const int argc,
     }
 }
 
-void Application::run() {
+void Application::run(DayFunction dayFunction) {
     const auto dayToRun = (mDayToRun.has_value() ? *mDayToRun : getLastDayToRun());
 
     std::cout << "Running day " << dayToRun << '\n';
@@ -28,13 +28,13 @@ void Application::run() {
         throw std::logic_error("Invalid day");
     }
 
-    const auto& dayFunction = mDayFunctions.at(dayToRun - 1);
-    if (dayFunction == nullptr) {
+    const auto& dayFunctionToRun = (dayFunction == nullptr ? mDayFunctions.at(dayToRun - 1) : dayFunction);
+    if (dayFunctionToRun == nullptr) {
         throw std::logic_error("No solution for requested day");
     }
 
     const auto timepointBefore = std::chrono::system_clock::now();
-    const auto result = dayFunction();
+    const auto result = dayFunctionToRun();
     const auto timepointAfter = std::chrono::system_clock::now();
     const auto elapsedTime = timepointAfter - timepointBefore;
     std::cout << "Part 1 result: " << result.first << '\n';

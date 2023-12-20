@@ -15,6 +15,8 @@ set(AOC_2023_LIB_SOURCES "day01.cpp"
                          "day15.cpp"
                          "day16.cpp"
                          "day17.cpp"
+                         "day18.cpp"
+                         "day19.cpp"
                          "day20.cpp"
 )
 

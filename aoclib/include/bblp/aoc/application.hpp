@@ -14,7 +14,7 @@ class Application {
 
     Application(const int argc, const char* argv[], const std::array<DayFunction, MAX_DAY_COUNT>& dayFunctions);
 
-    void run();
+    void run(DayFunction dayFunction = {});
 
   private:
     uint32_t getLastDayToRun() const;

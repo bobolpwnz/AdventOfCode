@@ -16,6 +16,7 @@ set(TEST_DAY_SOURCES "test_day01.cpp"
                      "test_day14.cpp"
                      "test_day15.cpp"
                      "test_day16.cpp"
+                     "test_day19.cpp"
                      "test_day20.cpp"
 )
 
