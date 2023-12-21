@@ -16,4 +16,10 @@ class Point {
     int64_t x;
     int64_t y;
 };
+
+struct PointHash {
+    size_t operator()(const Point& point) const {
+        return point.x >= point.y ? point.x * point.x + point.x + point.y : point.x + point.y * point.y;
+    }
+};
 }  // namespace bblp::aoc

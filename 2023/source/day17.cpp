@@ -22,12 +22,6 @@
 
 namespace bblp::aoc {
 namespace {
-struct PointHash {
-    size_t operator()(const Point& point) const {
-        return point.x >= point.y ? point.x * point.x + point.x + point.y : point.x + point.y * point.y;
-    }
-};
-
 enum class Direction { UNKNOWN, UP, DOWN, RIGHT, LEFT };
 
 struct Distance {
