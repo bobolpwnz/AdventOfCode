@@ -12,10 +12,11 @@ set(ENABLE_DEVELOPER_MODE
 set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT FALSE)
 
 include(FetchContent)
-FetchContent_Declare(_project_options URL https://github.com/aminya/project_options/archive/refs/tags/v0.20.0.zip)
+FetchContent_Declare(_project_options URL https://github.com/aminya/project_options/archive/refs/tags/v0.41.0.zip)
 FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
 
+run_conan()
 project(
   advent_of_code
   VERSION 0.0.1
@@ -48,7 +49,6 @@ endif()
 include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
 dynamic_project_options(
-    ENABLE_CONAN
     PCH_HEADERS
     <vector>
     <string>
@@ -87,3 +87,4 @@ set(AOC_LIB_NAME "aoclib")
 add_subdirectory(aoclib)
 add_subdirectory(2022)
 add_subdirectory(2023)
+add_subdirectory(2024)
