@@ -3,6 +3,7 @@ find_package(GTest REQUIRED)
 set(TEST_DAY_SOURCES "test_day01.cpp"
                      "test_day02.cpp"
                      "test_day03.cpp"
+                     "test_day04.cpp"
 )
 
 add_executable(${AOC_2024_TEST_NAME} "main.cpp" ${TEST_DAY_SOURCES})

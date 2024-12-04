@@ -14,7 +14,7 @@ int main(const int argc, const char* argv[]) {
     try {
         static bblp::aoc::Application::DayFunction dayToRun{};
         const std::array<bblp::aoc::Application::DayFunction, MAX_DAY_COUNT> days{bblp::aoc::day01, bblp::aoc::day02,
-                                                                                  bblp::aoc::day03};
+                                                                                  bblp::aoc::day03, bblp::aoc::day04};
         bblp::aoc::Application app{argc, argv, days};
         app.run(dayToRun);
         return 0;
