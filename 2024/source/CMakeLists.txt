@@ -2,6 +2,7 @@ set(AOC_2024_LIB_SOURCES "day01.cpp"
                          "day02.cpp" 
                          "day03.cpp"
                          "day04.cpp"
+                         "day05.cpp"
 )
 
 add_library(${AOC_2024_LIB_NAME} ${AOC_2024_LIB_SOURCES})
